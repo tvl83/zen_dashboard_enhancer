@@ -2,7 +2,8 @@ var Financial = function(container, ajaxUrl, callback) {
     var that = this;
     var chart;
     this.constructor = function (container, ajaxUrl, callback) {
-        //addConfigurationElement('Create financial chart', 'financial-chart-creation');
+
+        addConfigurationElement('Create financial chart', 'financial-chart-creation');
         if ($(container).length) {
             $(container)
                 .prepend('<div id="financialTrackingContainer"' +
@@ -49,7 +50,7 @@ var Financial = function(container, ajaxUrl, callback) {
                     }
                 }
             });
-            //validateConfigurationElement('financial-chart-creation');
+            validateConfigurationElement('financial-chart-creation');
         }
     };
     this.populate = function(callback, ajaxUrl) {
@@ -59,7 +60,7 @@ var Financial = function(container, ajaxUrl, callback) {
                 iDisplayLength: 0
             },
             beforeSend: function() {
-                //addConfigurationElement('Populate financial chart', 'financial-chart-population');
+                addConfigurationElement('Populate financial chart', 'financial-chart-population');
             },
             success: function (response) {
                 var aaData = response.aaData;
@@ -162,7 +163,7 @@ var Financial = function(container, ajaxUrl, callback) {
 
                 //Update the xAxis according to the days
                 that.chart.xAxis[0].setCategories(days);
-                //validateConfigurationElement('financial-chart-population');
+                validateConfigurationElement('financial-chart-population');
                 if (callback) {
                     callback();
                 }
