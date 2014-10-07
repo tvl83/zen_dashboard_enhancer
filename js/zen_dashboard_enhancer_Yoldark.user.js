@@ -3,7 +3,7 @@
 // @name        zen dashboard enhancer
 // @namespace   zenminer
 // @include     https://cloud.zenminer.com/*
-// @version     2.6.10
+// @version     2.6.11
 // @updateUrl   https://rawgit.com/Yoldark34/zen_dashboard_enhancer/raw/master/js/zen_dashboard_enhancer_Yoldark.user.js
 // @grant       GM_log
 // @grant       GM_getValue
@@ -49,7 +49,8 @@
 // 2.6.8 : Add user autorisation for doing test or not
 // 2.6.9 : host all the used libraries
 // 2.6.10 : add external css style, add clock
-var VERSION = '2.6.10';
+// 2.6.11 : externalise highcharts libs because of encoding problems
+var VERSION = '2.6.11';
 var cutVersion = VERSION.split('.');
 var SHORT_VERSION = cutVersion[0] + "." + cutVersion[1];
 var FINANCIAL_DISPLAYED_DAYS_QUANTITY = 50;
