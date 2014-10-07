@@ -4,21 +4,21 @@
 // @namespace   zenminer
 // @include     https://cloud.zenminer.com/*
 // @version     2.6.10
-// @updateUrl   https://rawgit.com/Yoldark34/6a023d534f3ff951f7dc/raw/zen_dashboard_enhancer_Yoldark.user.js
+// @updateUrl   https://rawgit.com/Yoldark34/zen_dashboard_enhancer/raw/master/js/zen_dashboard_enhancer_Yoldark.user.js
 // @grant       GM_log
 // @grant       GM_getValue
 // @grant       GM_setValue
 // @grant       GM_listValues
 // @grant       GM_getResourceText
 // @grant       GM_addStyle
-// @require     https://rawgit.com/Yoldark34/1e621d246e7b329568fb/raw/jquery-1.11.1.min.js
-// @require     https://rawgit.com/Yoldark34/9d3cca0371a8ee24c47a/raw/highcharts.js
-// @require     https://rawgit.com/Yoldark34/93a9781b993bd340ecc3/raw/exporting.js
-// @require     https://rawgit.com/Yoldark34/0ced5f1d394c649b74eb/raw/export-csv.js
-// @require     https://rawgit.com/Yoldark34/0374d239c35d5e453a96/raw/date.js
+// @require     https://rawgit.com/Yoldark34/zen_dashboard_enhancer/raw/master/js/libraries/jquery-1.11.1.min.js
+// @require     https://rawgit.com/Yoldark34//zen_dashboard_enhancer/raw/master/js/libraries/highcharts.js
+// @require     https://rawgit.com/Yoldark34/Yoldark34/zen_dashboard_enhancer/raw/master/js/libraries/exporting.js
+// @require     https://rawgit.com/Yoldark34/zen_dashboard_enhancer/raw/master/js/libraries/export-csv.js
+// @require     https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/raw/master/js/libraries/date.js
 // @require     https://raw.githubusercontent.com/mcmastermind/jClocksGMT/master/js/jquery.rotate.js
 // @require     https://raw.githubusercontent.com/mcmastermind/jClocksGMT/master/js/jClocksGMT.js
-// @resource    zenDashboardCss https://rawgit.com/Yoldark34/3d6ea9309902689c1baa/raw/zen_dashboard_enhancer_Yoldark.css
+// @resource    zenDashboardCss https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/raw/master/css/zen_dashboard_enhancer_Yoldark.css
 // ==/UserScript==
 // changelog
 // 1.0.0 : creation, add BTC value in zencloud dashboard
