@@ -15,7 +15,7 @@
 // @require     http://code.highcharts.com/highcharts.js
 // @require     https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/master/js/libraries/exporting.js
 // @require     https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/master/js/libraries/export-csv.js
-// @require     https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/raw/master/js/libraries/date.js
+// @require     https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/master/js/libraries/date.js
 // @require     https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/master/js/jquery.rotate.js
 // @require     https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/master/js/jClocksGMT.js
 // @resource    zenDashboardCss https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/master/css/zen_dashboard_enhancer_Yoldark.css
