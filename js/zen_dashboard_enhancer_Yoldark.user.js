@@ -3,7 +3,7 @@
 // @name        zen dashboard enhancer
 // @namespace   zenminer
 // @include     https://cloud.zenminer.com/*
-// @version     2.6.11
+// @version     2.6.12
 // @updateUrl   https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/master/js/zen_dashboard_enhancer_Yoldark.user.js
 // @grant       GM_log
 // @grant       GM_getValue
@@ -18,10 +18,12 @@
 // @require     https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/master/js/libraries/date.js
 // @require     https://raw.githubusercontent.com/mcmastermind/jClocksGMT/master/js/jquery.rotate.js
 // @require     https://raw.githubusercontent.com/mcmastermind/jClocksGMT/master/js/jClocksGMT.js
+// @require     https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/master/js/zen_dashboard_enhancer_financial.js
+// @require     https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/master/js/zen_dashboard_enhancer_top_dashboard.js
 // @resource    zenDashboardCss https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/master/css/zen_dashboard_enhancer_Yoldark.css
 // ==/UserScript==
 // changelog
-// 1.0.0 : creation, add BTC value in zencloud dashboard
+// 1.0.0 : creation, add BTC valu1e in zencloud dashboard
 // 1.1.0 : Add informations message if user has no fund on his account.
 // 2.0.0 : change Jquery version, add highcharts, add financial chart, add date.js library
 // 2.1.0 : invert credit and debits on financial chart
@@ -50,7 +52,7 @@
 // 2.6.9 : host all the used libraries
 // 2.6.10 : add external css style, add clock
 // 2.6.11 : externalise highcharts libs because of encoding problems
-var VERSION = '2.6.11';
+var VERSION = '2.6.12';
 var cutVersion = VERSION.split('.');
 var SHORT_VERSION = cutVersion[0] + "." + cutVersion[1];
 var FINANCIAL_DISPLAYED_DAYS_QUANTITY = 50;
@@ -430,9 +432,8 @@ function configurationChecker() {
     displayLogMessage('Greasemonkey config checking error', MESSAGE_TYPE_ERROR);
 
     var callback = function() {
-        console.log('test');
         mockDiv.empty();
-        displayTopDashboard(mockDiv);
+        new TopDashboard(mockDiv, SCRIPT_FEE_RATE, GENESIS_FEE_RATE);
         mockDiv.empty();
         mockDiv.append("<div></div>");
         initializeConfigPanel('#mockDiv div');
@@ -562,7 +563,8 @@ function main() {
         }
     } else {
         if ($('.balance-value') && $('.balanceUSD-value')) {
-            displayTopDashboard($('.navbar-bottom-row'));
+            //displayTopDashboard($('.navbar-bottom-row'));
+            new TopDashboard($('.navbar-bottom-row'), SCRIPT_FEE_RATE, GENESIS_FEE_RATE);
         }
 
         if (page === 'Balance') {
