@@ -465,7 +465,7 @@ function configurationChecker() {
     new Financial(mockDiv, AJAX_RETRIEVE_FINANCIAL_DATA, callback);
 }
 
-function requestRoiData(callback) {
+/*function requestRoiData(callback) {
 
 }
 
@@ -524,7 +524,7 @@ function initializeRoiChart(container, callback) {
             data: [3.9, 4.2, 5.7, 8.5, 11.9, 15.2, 17.0, 16.6, 14.2, 10.3, 6.6, 4.8]
         }]
     });
-}
+}*/
 
 function main() {
     if (GM_getValue("MODAL_MESSAGE_SUCCESS_QUEUE", false)) {
@@ -575,7 +575,7 @@ function main() {
         } else if (page === 'Profile') {
             initializeConfigPanel($('div.col-lg-6.col-md-6.col-sm-6.col-xs-12 .panel:first'));
         } else if (page === 'Miners') {
-            initializeRoiChart($('div#content div.content-wrapper div.outlet'));
+            //initializeRoiChart($('div#content div.content-wrapper div.outlet'));
         }
         checkShitMode();
     }
