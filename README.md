@@ -1,9 +1,6 @@
-zen_dashboard_enhancer
-======================
+#zen_dashboard_enhancer
 
 Greasemonkey script to enhance ZenPortal dashboard
-
-======================
 
 ##Install :
 You can download the file and open-it on greasemonkey or copy-paste it on greasemonkey's new script interface
