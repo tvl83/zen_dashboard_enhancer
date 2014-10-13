@@ -1,8 +1,8 @@
 var TopDashboard = function(container, scriptFee, genesisFee) {
     this.constructor = function (container, scriptFee, genesisFee) {
         addConfigurationElement('Display top dashboard data', 'top-dashboard-data');
-        var bitcoin = parseFloat($('.balance-value').html());
-        var dollars = parseFloat($('.balanceUSD-value').html().split('<') [0]);
+        var bitcoin = parseFloat($('.balance-value').html().replace(',', ""));
+        var dollars = parseFloat($('.balanceUSD-value').html().split('<') [0].replace(',', ""));
 
         if (bitcoin === 0.0) {
             $(container)
