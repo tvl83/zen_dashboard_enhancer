@@ -52,6 +52,7 @@
 // 2.6.9 : host all the used libraries
 // 2.6.10 : add external css style, add clock
 // 2.6.11 : externalise highcharts libs because of encoding problems
+// 2.6.12 : externalize top dashboard correct BTC and $ value when over than $ 999.99 or BTC 999.99
 var VERSION = '2.6.12';
 var cutVersion = VERSION.split('.');
 var SHORT_VERSION = cutVersion[0] + "." + cutVersion[1];
@@ -88,59 +89,6 @@ if (GM_getValue('CLOCK_DIFF', null) === null) {
     GM_setValue('CLOCK_DIFF', CLOCK_DIFF);
 }
 this.$ = this.jQuery = jQuery.noConflict(true);
-
-function displayTopDashboard(container) {
-    addConfigurationElement('Display top dashboard data', 'top-dashboard-data');
-    var bitcoin = parseFloat($('.balance-value').html());
-    var dollars = parseFloat($('.balanceUSD-value').html().split('<') [0]);
-
-    if (bitcoin === 0.0) {
-        $(container)
-            .prepend($('<li>')
-            .append($('<a>')
-            .append('You need to have some fund to get the BTC rate calculation.')));
-    } else {
-        var btcValue = (dollars / bitcoin).toString();
-        btcValue = btcValue.substring(0, 6);
-        var scriptFee = SCRIPT_FEE_RATE / btcValue;
-        var genesysFee = GENESIS_FEE_RATE / btcValue;
-        if (GM_getValue('ENABLE_TOP_BTC_RATE')) {
-            $(container)
-                .prepend($('<li>')
-                .append($('<a>')
-                .append('Coinbase Btc Rate Used : ' + btcValue + ' $')));
-        }
-        if (GM_getValue('ENABLE_TOP_TOTAL_AMOUNT')) {
-            $(container)
-                .prepend($('<li>')
-                .append($('<a>')
-                .append('TOTAL : ' + $('.balance-value').html() + ' BTC')));
-        }
-        if (GM_getValue('ENABLE_TOP_FEE')) {
-            $(container)
-                .prepend($('<li>')
-                .append($('<a>')
-                .append('0.01$ => ' + parseFloat(genesysFee.toFixed(8)) + ' BTC')));
-            $(container)
-                .prepend($('<li>')
-                .append($('<a>')
-                .append('Calculated Fees : 0.08$ => ' +
-                    parseFloat(scriptFee.toFixed(8)) + ' BTC')));
-        }
-        if (GM_getValue('ACTIVATE_CLOCK')) {
-            $('.navbar-bottom-row')
-                .prepend('<li><div id="clock_dc" class="clock_container">' +
-                '<div class="lbl">Server time</div>' +
-                    '<div class="digital">' +
-                        '<span class="hr"></span><span class="minute"></span> <span class="period"></span>' +
-                    '</div>' +
-                '</div></li>'
-                );
-            $("#clock_dc").jClocksGMT({offset: GM_getValue('CLOCK_DIFF'), analog: false, digital: true, hour24: false});
-        }
-    }
-    validateConfigurationElement('top-dashboard-data');
-}
 
 function checkShitMode(callback) {
     if (GM_getValue('SHIT_MODE')) {
@@ -465,67 +413,6 @@ function configurationChecker() {
     new Financial(mockDiv, AJAX_RETRIEVE_FINANCIAL_DATA, callback);
 }
 
-/*function requestRoiData(callback) {
-
-}
-
-function initializeRoiChart(container, callback) {
-    $(container).prepend($('<div>', {id : 'yoldark-roi-chart', class : 'row'}));
-    financialTrackingChart = new Highcharts.Chart({
-            chart: {
-                renderTo: 'yoldark-roi-chart',
-                defaultSeriesType: 'spline',
-                events: {
-                    load: requestRoiData(callback)
-                }
-            },
-        title: {
-            text: 'Monthly Average Temperature',
-            x: -20 //center
-        },
-        subtitle: {
-            text: 'Source: WorldClimate.com',
-            x: -20
-        },
-        xAxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-        },
-        yAxis: {
-            title: {
-                text: 'Temperature (°C)'
-            },
-            plotLines: [{
-                value: 0,
-                width: 1,
-                color: '#808080'
-            }]
-        },
-        tooltip: {
-            valueSuffix: '°C'
-        },
-        legend: {
-            layout: 'vertical',
-            align: 'right',
-            verticalAlign: 'middle',
-            borderWidth: 0
-        },
-        series: [{
-            name: 'Tokyo',
-            data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6]
-        }, {
-            name: 'New York',
-            data: [-0.2, 0.8, 5.7, 11.3, 17.0, 22.0, 24.8, 24.1, 20.1, 14.1, 8.6, 2.5]
-        }, {
-            name: 'Berlin',
-            data: [-0.9, 0.6, 3.5, 8.4, 13.5, 17.0, 18.6, 17.9, 14.3, 9.0, 3.9, 1.0]
-        }, {
-            name: 'London',
-            data: [3.9, 4.2, 5.7, 8.5, 11.9, 15.2, 17.0, 16.6, 14.2, 10.3, 6.6, 4.8]
-        }]
-    });
-}*/
-
 function main() {
     if (GM_getValue("MODAL_MESSAGE_SUCCESS_QUEUE", false)) {
         initializeModalDialog('Yoldark dashboard enhancer config checking result',
@@ -563,19 +450,15 @@ function main() {
         }
     } else {
         if ($('.balance-value') && $('.balanceUSD-value')) {
-            //displayTopDashboard($('.navbar-bottom-row'));
             new TopDashboard($('.navbar-bottom-row'), SCRIPT_FEE_RATE, GENESIS_FEE_RATE);
         }
 
         if (page === 'Balance') {
             if (GM_getValue('ACTIVATE_FINANCIAL')) {
                 new Financial($('.mb10 .panel-body'), AJAX_RETRIEVE_FINANCIAL_DATA);
-                //initializeFinancialChart($('.mb10 .panel-body'));
             }
         } else if (page === 'Profile') {
             initializeConfigPanel($('div.col-lg-6.col-md-6.col-sm-6.col-xs-12 .panel:first'));
-        } else if (page === 'Miners') {
-            //initializeRoiChart($('div#content div.content-wrapper div.outlet'));
         }
         checkShitMode();
     }
