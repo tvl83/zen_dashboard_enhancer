@@ -3,8 +3,9 @@ zen_dashboard_enhancer
 
 Greasemonkey script to enhance ZenPortal dashboard
 
-##Install 
+======================
 
+##Install 
 You can download the file and open-it on greasemonkey or copy-paste it on greasemonkey's new script interface
 
 Firefox plugin :
@@ -33,6 +34,7 @@ https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldm
 ======================
 
 ##Changelog
+
 + 1.0.0 : creation, add BTC valu1e in zencloud dashboard
 + 1.1.0 : Add informations message if user has no fund on his account.
 + 2.0.0 : change Jquery version, add highcharts, add financial chart, add date.js library
