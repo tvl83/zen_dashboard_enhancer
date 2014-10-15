@@ -1,4 +1,4 @@
-// ==UserScript==
+﻿// ==UserScript==
 // @author      Yoldark
 // @name        zen dashboard enhancer
 // @namespace   zenminer
@@ -21,7 +21,7 @@
 // @require     https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/master/js/financial.js
 // @require     https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/master/js/top_dashboard.js
 // @require     https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/dev/js/roi_calc.js
-// @resource    zenDashboardCss https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/master/css/zen_dashboard_enhancer_Yoldark.css
+// @resource    zenDashboardCss https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/dev/css/zen_dashboard_enhancer_Yoldark.css
 // ==/UserScript==
 var VERSION = '2.7.0';
 var cutVersion = VERSION.split('.');
@@ -164,6 +164,10 @@ function initializeConfigPanel(container) {
     if (GM_getValue('ACTIVATE_CLOCK')) {
         activateClock = 'checked="checked"';
     }
+    var activateROI = '';
+    if (GM_getValue('ACTIVATE_ROI', false)) {
+        activateROI = 'checked="checked"';
+    }
 
     var panelAdminCode =
        '<div class="panel panel-default plain panel-config">' +
@@ -205,12 +209,12 @@ function initializeConfigPanel(container) {
                     '<input class="btn btn-primary reset-clock" type="button" ' +
                         'value="Reset to default" />' +
                 '</label><br/><br/><br/>' +
-                 '<h4 class="panel-title">Financial chart :</h4><br/>' +
-                 '<div class="form-group">' +
+                '<h4 class="panel-title">Financial chart :</h4><br/>' +
+                '<div class="form-group">' +
                     '<label>' +
                         '<input class="checkbox-financial-activation" type="checkbox"' +
                         'value="activate" ' + activateFinancial + '/>&nbsp;' +
-                        'Enable Financial panel on Balance page' +
+                        'Enable Financial chart on Balance page' +
                     '</label>' +
                 '</div>' +
                 '<label class="control-label">Numbers of displayed days&nbsp;' +
@@ -219,8 +223,15 @@ function initializeConfigPanel(container) {
                         '&nbsp;' +
                     '<input class="btn btn-primary reset-financial" type="button" ' +
                         'value="Reset to default" />' +
-                '</label><br/>' +
-                '<br/><br/>' +
+                '</label><br/><br/><br/>' +
+                '<h4 class="panel-title">ROI chart :</h4><br/>' +
+                '<div class="form-group">' +
+                    '<label>' +
+                        '<input class="checkbox-roi-activation" type="checkbox"' +
+                        'value="activate" ' + activateROI + '/>&nbsp;' +
+                        'Enable ROI chart on dashboard page' +
+                    '</label>' +
+                '</div><br/><br/><br/>' +
                 '<h4 class="panel-title">Misc :</h4><br/>' +
                 '<div class="form-group">' +
                     '<label>'+
@@ -255,6 +266,7 @@ function initializeConfigPanel(container) {
                 GM_setValue('ENABLE_TOP_BTC_RATE', $('.checkbox-calculated-btc-rate').is(':checked'));
                 GM_setValue('ACTIVATE_CLOCK', $('.checkbox-clock').is(':checked'));
                 GM_setValue('CLOCK_DIFF', $('.input-clock').val());
+                GM_setValue('ACTIVATE_ROI', $('.checkbox-roi-activation').is(':checked'));
                 if ($('.checkbox-config-checker').is(':checked')) {
                     GM_setValue('CONFIG_CHECKER', null);
                 }
@@ -431,9 +443,11 @@ function main() {
         } else if (page === 'Profile') {
             initializeConfigPanel($('div.col-lg-6.col-md-6.col-sm-6.col-xs-12 .panel:first'));
         } else if (page === 'Dashboard') {
-            new RoiCalc($('div.col-lg-3.col-md-6.col-sm-6.col-xs-12'),
-                AJAX_RETRIEVE_LATEST_ACTIVITY,
-                AJAX_RETRIEVE_FINANCIAL_DATA);
+            if (GM_getValue('ACTIVATE_ROI', false)) {
+                new RoiCalc($('div.col-lg-3.col-md-6.col-sm-6.col-xs-12'),
+                    AJAX_RETRIEVE_LATEST_ACTIVITY,
+                    AJAX_RETRIEVE_FINANCIAL_DATA);
+            }
         }
         checkShitMode();
     }
