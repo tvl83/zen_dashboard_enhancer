@@ -3,7 +3,7 @@
 // @name        zen dashboard enhancer
 // @namespace   zenminer
 // @include     https://cloud.zenminer.com/*
-// @version     2.6.12
+// @version     2.7.0
 // @updateUrl   https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/master/js/zen_dashboard_enhancer_Yoldark.user.js
 // @grant       GM_log
 // @grant       GM_getValue
@@ -20,40 +20,10 @@
 // @require     https://raw.githubusercontent.com/mcmastermind/jClocksGMT/master/js/jClocksGMT.js
 // @require     https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/master/js/financial.js
 // @require     https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/master/js/top_dashboard.js
+// @require     https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/dev/js/roi_calc.js
 // @resource    zenDashboardCss https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/master/css/zen_dashboard_enhancer_Yoldark.css
 // ==/UserScript==
-// changelog
-// 1.0.0 : creation, add BTC valu1e in zencloud dashboard
-// 1.1.0 : Add informations message if user has no fund on his account.
-// 2.0.0 : change Jquery version, add highcharts, add financial chart, add date.js library
-// 2.1.0 : invert credit and debits on financial chart
-// 2.2.0 : don't display fund in financial chart
-// 2.3.0 : add outcome line in financial chart, change colors
-// 2.3.1 : remove a trailing comma :)
-// 2.3.2 : properly truncate outcome values
-// 2.3.3 : Change yAxis to "BTC" instead of "BTC Value"
-// 2.4.0 : Export to CSV.
-// 2.4.1 : Add Calculated rates fee
-// 2.4.2 : Dont display multiple financial highcharts
-// 2.4.3 : Better identification of which page is active, use function to clean code
-// 2.4.4 : Correct incompatibility with chrome ?
-// 2.4.5 : Add config panel
-// 2.5.0 : Add configuration panel for financial and shit mode, logs messages
-// 2.5.1 : Remove "Withdrawal" and "Sale" from the financial chart
-// 2.6.0 : Add configuration checker, modal dialogs, callbacks
-// 2.6.1 : Use only "Payout" and "Maintenance fee" for the graphe, change outcome by income
-// 2.6.2 : Test only for minor version, add Rerun test on config panel, reload after saving
-// 2.6.3 : Add Top bar configuration element in the dashboard
-// 2.6.4 : Total amount checkbox was named calculated fee
-// 2.6.5 : Correct days displayed in case of range cut
-// 2.6.6 : Fix for positive maintenance fee
-// 2.6.7 : Update link, chrome compatibility improvment.
-// 2.6.8 : Add user autorisation for doing test or not
-// 2.6.9 : host all the used libraries
-// 2.6.10 : add external css style, add clock
-// 2.6.11 : externalise highcharts libs because of encoding problems
-// 2.6.12 : externalize top dashboard correct BTC and $ value when over than $ 999.99 or BTC 999.99
-var VERSION = '2.6.12';
+var VERSION = '2.7.0';
 var cutVersion = VERSION.split('.');
 var SHORT_VERSION = cutVersion[0] + "." + cutVersion[1];
 var FINANCIAL_DISPLAYED_DAYS_QUANTITY = 50;
@@ -64,6 +34,7 @@ var MESSAGE_TYPE_SUCCESS = 'success';
 var MESSAGE_TYPE_ERROR = 'error';
 var MESSAGE_TYPE_WARNING = 'error';
 var AJAX_RETRIEVE_FINANCIAL_DATA = 'https://cloud.zenminer.com/api/dt/financials';
+var AJAX_RETRIEVE_LATEST_ACTIVITY = 'https://cloud.zenminer.com/api/activity';
 
 var zenDashboardCss = GM_getResourceText ("zenDashboardCss");
 GM_addStyle (zenDashboardCss);
@@ -331,19 +302,19 @@ function initializeModalDialog(title, body, okText, cancelText, successCallback,
     '</div>');
     $('#yoldark-modal').show();
     $(document).on("click", '#yoldark-modal .close', function () {
-        $('#yoldark-modal').remove();
+        $('#yoldark-modal').hide();
         if (typeof cancelCallback !== 'undefined') {
             cancelCallback();
         }
     });
     $(document).on("click", '#yoldark-modal .btn-danger', function () {
-        $('#yoldark-modal').remove();
+        $('#yoldark-modal').hide();
         if (typeof cancelCallback !== 'undefined') {
             cancelCallback();
         }
     });
     $(document).on("click", '#yoldark-modal .btn-yoldark-modal', function () {
-        $('#yoldark-modal').remove();
+        $('#yoldark-modal').hide();
         if (typeof successCallback !== 'undefined') {
             successCallback();
         }
@@ -459,11 +430,15 @@ function main() {
             }
         } else if (page === 'Profile') {
             initializeConfigPanel($('div.col-lg-6.col-md-6.col-sm-6.col-xs-12 .panel:first'));
+        } else if (page === 'Dashboard') {
+            new RoiCalc($('div.col-lg-3.col-md-6.col-sm-6.col-xs-12'),
+                AJAX_RETRIEVE_LATEST_ACTIVITY,
+                AJAX_RETRIEVE_FINANCIAL_DATA);
         }
         checkShitMode();
     }
 }
 
 $(document).ready(function() {
-	main();
+    main();
 });
