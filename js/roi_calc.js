@@ -47,7 +47,7 @@ var RoiCalc = function(container, ajaxActivityUrl, ajaxFinancialUrl, callback) {
 
         initializeModalDialog(
             'roi-configure-modal',
-            'ROI track configuration',
+            'ROI chart configuration',
             '<h4>External Expenses</h4>' +
             '<p>All the expenses will be added into the reach amount (use 0 to not count an expense)</p>' +
             '<div class="expenses">' +
