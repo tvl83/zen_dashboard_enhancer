@@ -85,6 +85,15 @@ var RoiCalc = function(container, ajaxActivityUrl, ajaxFinancialUrl, callback) {
                 text: 'ROI tracking',
                 x: -20 //center
             },
+            xAxis: {
+                title: {
+                    text: ' Day'
+                },
+                type: 'category',
+                labels: {
+                    rotation: -75
+                }
+            },
             yAxis: {
                 title: {
                     text: '$ amount'
@@ -94,10 +103,7 @@ var RoiCalc = function(container, ajaxActivityUrl, ajaxFinancialUrl, callback) {
                     value: 0,
                     width: 1,
                     color: '#808080'
-                }],
-                labels: {
-                    rotation: -75
-                }
+                }]
             },
             tooltip: {
                 valueSuffix: ' $'
