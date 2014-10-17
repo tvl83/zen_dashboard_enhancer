@@ -1,3 +1,4 @@
+
 var RoiCalc = function(container, ajaxActivityUrl, ajaxFinancialUrl, callback) {
     var that = this;
     var chart;
@@ -11,6 +12,8 @@ var RoiCalc = function(container, ajaxActivityUrl, ajaxFinancialUrl, callback) {
         $.each( $('.withdrawal'), function( ) {
             GM_setValue('WITHDRAWAL_' + $('.date', this).html(), $('.checkbox-withdrawal', this).is(':checked'));
         });
+        displayLogMessage('Roi chart configuration successfully saved.', MESSAGE_TYPE_SUCCESS);
+        location.reload();
     },
     this._cancelConfiguration= function() {
         $.each( $('.expense'), function( ) {
@@ -19,8 +22,10 @@ var RoiCalc = function(container, ajaxActivityUrl, ajaxFinancialUrl, callback) {
         $.each( $('.transfer'), function( ) {
             $('.checkbox-transfer', this).prop('checked', GM_getValue('TRANSFER_' + $('.date', this).html(), true));
         });
+        displayLogMessage('Roi chart configuration successfully canceled.', MESSAGE_TYPE_SUCCESS);
     },
     this.constructor = function (container, ajaxActivityUrl, ajaxFinancialUrl, callback) {
+        addConfigurationElement('Create ROI chart', 'roi-chart-creation');
         $(container).last().after(
             '<div class="col-lg-12">' +
                 '<div class="panel panel-default plain toggle" id="hart1">' +
@@ -39,8 +44,9 @@ var RoiCalc = function(container, ajaxActivityUrl, ajaxFinancialUrl, callback) {
             '</div>' +
             '<div class="clearfix">' +
             '</div>');
+
         initializeModalDialog(
-            'yoldark-modal',
+            'roi-configure-modal',
             'ROI track configuration',
             '<h4>External Expenses</h4>' +
             '<p>All the expenses will be added into the reach amount (use 0 to not count an expense)</p>' +
@@ -60,10 +66,13 @@ var RoiCalc = function(container, ajaxActivityUrl, ajaxFinancialUrl, callback) {
             that._saveConfiguration,
             that._cancelConfiguration
         );
+
         $(document).on("click", ".configure-roi", function() {
-            modalDialogShow('yoldark-modal');
+            modalDialogShow('roi-configure-modal');
         });
+
         $('.yoldark-roi-chart-container').prepend($('<div>', {id : 'yoldark-roi-chart', class : 'row'}));
+
         that.chart = new Highcharts.Chart({
                 chart: {
                     renderTo: 'yoldark-roi-chart',
@@ -97,6 +106,7 @@ var RoiCalc = function(container, ajaxActivityUrl, ajaxFinancialUrl, callback) {
                 borderWidth: 0
             }
         });
+        validateConfigurationElement('roi-chart-creation');
     };
     this._getPurchases = function (ajaxFinancialUrl, callback) {
         $.getJSON( ajaxFinancialUrl + '?iDisplayLength=0', function( subData ) {
@@ -257,7 +267,7 @@ var RoiCalc = function(container, ajaxActivityUrl, ajaxFinancialUrl, callback) {
 
                         //Add menu items in the configuration panel
                         if (data.purchasesPresent[days[i]] && data.autoPurchasesPresent[days[i]] === 0) {
-                            $('div#yoldark-modal.modal div.expenses').append(
+                            $('div#roi-configure-modal.modal div.expenses').append(
                                     '<div class="expense">' +
                                     '<span class="date">' +
                                         days[i] +
@@ -277,7 +287,7 @@ var RoiCalc = function(container, ajaxActivityUrl, ajaxFinancialUrl, callback) {
                                 cumulReach += parseFloat(amount.toFixed(2));
                                 checked = 'checked="checked"';
                             }
-                            $('div#yoldark-modal.modal div.transfers').append(
+                            $('div#roi-configure-modal.modal div.transfers').append(
                                 '<div class="transfer">' +
                                     '<input type="checkbox" class="checkbox-transfer" ' + checked + '>&nbsp;' +
                                     '<span class="date">' +
@@ -296,7 +306,7 @@ var RoiCalc = function(container, ajaxActivityUrl, ajaxFinancialUrl, callback) {
                                 cumulReach += parseFloat(amount.toFixed(2));
                                 checked = 'checked="checked"';
                             }
-                            $('div#yoldark-modal.modal div.withdrawals').append(
+                            $('div#roi-configure-modal.modal div.withdrawals').append(
                                 '<div class="withdrawal">' +
                                     '<input type="checkbox" class="checkbox-withdrawal" ' + checked + '>&nbsp;' +
                                     '<span class="date">' +

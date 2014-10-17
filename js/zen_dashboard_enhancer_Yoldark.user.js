@@ -173,7 +173,7 @@ function initializeConfigPanel(container) {
        '<div class="panel panel-default plain panel-config">' +
             '<div class="panel-heading white-bg">' +
                 '<h4 class="panel-title"><i class="br-compass"></i>' +
-                    'Greasemonkey script config (made by Yoldark)' +
+                    'Yoldark\'s dashboard enhancer (GreaseMonkey script)' +
                 '</h4>' +
                 '<h4 class="panel-title">Version : ' + VERSION + '</h4>' +
             '</div>' +
@@ -324,19 +324,19 @@ function initializeModalDialog(id, title, body, okText, cancelText, successCallb
                '</div>' +
         '</div>' +
     '</div>');
-    $(document).on("click", '#yoldark-modal .close', function () {
+    $(document).on("click", '#' + id + ' .close', function () {
         modalDialogHide(id);
         if (typeof cancelCallback !== 'undefined') {
             cancelCallback();
         }
     });
-    $(document).on("click", '#yoldark-modal .btn-danger', function () {
+    $(document).on("click", '#' + id + ' .btn-danger', function () {
         modalDialogHide(id);
         if (typeof cancelCallback !== 'undefined') {
             cancelCallback();
         }
     });
-    $(document).on("click", '#yoldark-modal .btn-yoldark-modal', function () {
+    $(document).on("click", '#' + id + ' .btn-yoldark-modal', function () {
         modalDialogHide(id);
         if (typeof successCallback !== 'undefined') {
             successCallback();
@@ -374,21 +374,24 @@ function configurationChecker() {
     displayLogMessage('Greasemonkey config checking', MESSAGE_TYPE_SUCCESS);
     displayLogMessage('Greasemonkey config checking error', MESSAGE_TYPE_ERROR);
 
-    var callback = function() {
+    var roiCallback = function() {
         mockDiv.empty();
         new TopDashboard(mockDiv, SCRIPT_FEE_RATE, GENESIS_FEE_RATE);
         mockDiv.empty();
         mockDiv.append("<div></div>");
         initializeConfigPanel('#mockDiv div');
+        mockDiv.empty();
 
         GM_setValue('SHIT_MODE', true);
         GM_setValue('SHIT_MODE_ENABLED', false);
         checkShitMode(function () {
             GM_setValue('SHIT_MODE', false);
             checkShitMode(function () {
-                GM_setValue('TESTING_MODE', false);
+                mockDiv.empty();
 
                 //test are ok
+                GM_setValue('TESTING_MODE', false);
+
                 if ($(".spin-holder-yoldark").length === 0) {
                     GM_setValue('CONFIG_CHECKER', SHORT_VERSION);
                     GM_setValue("MODAL_MESSAGE_SUCCESS_QUEUE",
@@ -405,7 +408,13 @@ function configurationChecker() {
             });
         });
     };
-    new Financial(mockDiv, AJAX_RETRIEVE_FINANCIAL_DATA, callback);
+
+    var financialCallback = function() {
+        mockDiv.empty();
+        mockDiv.append("<div>");
+        new RoiCalc($('div', mockDiv), AJAX_RETRIEVE_LATEST_ACTIVITY, AJAX_RETRIEVE_FINANCIAL_DATA, roiCallback);
+    };
+    new Financial(mockDiv, AJAX_RETRIEVE_FINANCIAL_DATA, financialCallback);
 }
 
 function main() {
