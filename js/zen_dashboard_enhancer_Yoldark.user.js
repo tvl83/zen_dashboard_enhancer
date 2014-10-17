@@ -20,8 +20,8 @@
 // @require     https://raw.githubusercontent.com/mcmastermind/jClocksGMT/master/js/jClocksGMT.js
 // @require     https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/master/js/financial.js
 // @require     https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/master/js/top_dashboard.js
-// @require     https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/dev/js/roi_calc.js
-// @resource    zenDashboardCss https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/dev/css/zen_dashboard_enhancer_Yoldark.css
+// @require     https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/master/js/roi_calc.js
+// @resource    zenDashboardCss https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/master/css/zen_dashboard_enhancer_Yoldark.css
 // ==/UserScript==
 var VERSION = '2.7.1';
 var cutVersion = VERSION.split('.');
