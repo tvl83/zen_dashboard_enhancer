@@ -260,6 +260,7 @@ var RoiCalc = function(container, ajaxActivityUrl, ajaxFinancialUrl, callback) {
                         } else if (aData.action === 'activated code') {
                             data.purchasesPresent[currentDate] = true;
                         } else if (aData.action === 'withdrawal') {
+                            data.amount[currentDate] += parseFloat(aData.details.split(' ')[5]);
                             data.withdrawals[currentDate] += parseFloat(aData.details.split(' ')[5]);
                             data.withdrawalPresent[currentDate] = true;
                         }
