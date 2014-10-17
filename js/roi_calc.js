@@ -8,6 +8,9 @@ var RoiCalc = function(container, ajaxActivityUrl, ajaxFinancialUrl, callback) {
         $.each( $('.transfer'), function( ) {
             GM_setValue('TRANSFER_' + $('.date', this).html(), $('.checkbox-transfer', this).is(':checked'));
         });
+        $.each( $('.withdrawal'), function( ) {
+            GM_setValue('WITHDRAWAL_' + $('.date', this).html(), $('.checkbox-withdrawal', this).is(':checked'));
+        });
     },
     this._cancelConfiguration= function() {
         $.each( $('.expense'), function( ) {
@@ -46,6 +49,10 @@ var RoiCalc = function(container, ajaxActivityUrl, ajaxFinancialUrl, callback) {
             '<h4>Transfers</h4>'+
             '<p>Uncheck a tranfer to not count it into the reach amount (donation for example)</p>' +
             '<div class="transfers">'+
+            '</div>' +
+            '<h4>Withdrawals</h4>'+
+            '<p>Uncheck a withdrawal to not count it into the reach amount (to exclude it for some reason)</p>' +
+            '<div class="withdrawals">'+
             '</div>'
             ,
             'Save',
@@ -157,7 +164,16 @@ var RoiCalc = function(container, ajaxActivityUrl, ajaxFinancialUrl, callback) {
                     var currentDate = null;
                     var daysRange = 0;
                     var i;
-                    var data = {amount:[], purchases: [], purchasesPresent:[], tranferIsPresent:[], transfers:[]};
+                    var data = {
+                        amount:[],
+                        purchases: [],
+                        autoPurchasesPresent:[],
+                        purchasesPresent:[],
+                        tranferIsPresent:[],
+                        transfers:[],
+                        withdrawalPresent: [],
+                        withdrawals: []
+                    };
                     var type;
                     var funds = [];
                     var reach = [];
@@ -189,8 +205,10 @@ var RoiCalc = function(container, ajaxActivityUrl, ajaxFinancialUrl, callback) {
                         }
                         data.amount[currentDate] = 0;
                         data.transfers[currentDate] = 0;
+                        data.autoPurchasesPresent[currentDate] = 0;
                         data.purchasesPresent[currentDate] = false;
                         data.tranferIsPresent[currentDate] = false;
+                        data.withdrawalPresent[currentDate] = false;
                     }
 
                     //Sort all the days
@@ -208,6 +226,8 @@ var RoiCalc = function(container, ajaxActivityUrl, ajaxFinancialUrl, callback) {
                             }
                         } else if (aData.action === 'auto purchased miner') {
                             data.amount[currentDate] -= parseFloat(aData.details.split('-')[1].split(' ')[0]);
+                            data.autoPurchasesPresent[currentDate]++;
+                            GM_setValue('EXPENSE_' + currentDate, 0);
                         } else if (aData.action === 'transfer completed') {
                             data.amount[currentDate] += parseFloat(aData.details.split(' ')[5]);
                             data.tranferIsPresent[currentDate] = true;
@@ -221,6 +241,9 @@ var RoiCalc = function(container, ajaxActivityUrl, ajaxFinancialUrl, callback) {
                             }
                         } else if (aData.action === 'activated code') {
                             data.purchasesPresent[currentDate] = true;
+                        } else if (aData.action === 'withdrawal') {
+                            data.withdrawals[currentDate] += parseFloat(aData.details.split(' ')[5]);
+                            data.withdrawalPresent[currentDate] = true;
                         }
                     }
 
@@ -232,8 +255,9 @@ var RoiCalc = function(container, ajaxActivityUrl, ajaxFinancialUrl, callback) {
                         funds.push(parseFloat(amount.toFixed(2)));
                         cumulFund += data.amount[days[i]];
 
+
                         //Add menu items in the configuration panel
-                        if (data.purchasesPresent[days[i]]) {
+                        if (data.purchasesPresent[days[i]] && data.autoPurchasesPresent[days[i]] === 0) {
                             $('div#yoldark-modal.modal div.expenses').append(
                                     '<div class="expense">' +
                                     '<span class="date">' +
@@ -243,6 +267,9 @@ var RoiCalc = function(container, ajaxActivityUrl, ajaxFinancialUrl, callback) {
                                     '<input class="input-amount" ' +
                                         'value="'+ GM_getValue('EXPENSE_' + days[i], 0) + '">&nbsp;$' +
                                 '</div>');
+                        }
+                        if (data.autoPurchasesPresent[days[i]] !== 0) {
+                            data.autoPurchasesPresent[days[i]]--;
                         }
                         if (data.tranferIsPresent[days[i]]) {
                             checked = '';
@@ -254,6 +281,25 @@ var RoiCalc = function(container, ajaxActivityUrl, ajaxFinancialUrl, callback) {
                             $('div#yoldark-modal.modal div.transfers').append(
                                 '<div class="transfer">' +
                                     '<input type="checkbox" class="checkbox-transfer" ' + checked + '>&nbsp;' +
+                                    '<span class="date">' +
+                                        days[i] +
+                                    '</span>' +
+                                    '&nbsp;<label class="control-label">'+
+                                        amount.toFixed(2) +
+                                    '&nbsp;USD&nbsp;</label>' +
+
+                                '</div>');
+                        }
+                        if (data.withdrawalPresent[days[i]]) {
+                            checked = '';
+                            amount = data.withdrawals[days[i]]*btcValue;
+                            if (GM_getValue('WITHDRAWAL_' + days[i], true)) {
+                                cumulReach += parseFloat(amount.toFixed(2));
+                                checked = 'checked="checked"';
+                            }
+                            $('div#yoldark-modal.modal div.withdrawals').append(
+                                '<div class="withdrawal">' +
+                                    '<input type="checkbox" class="checkbox-withdrawal" ' + checked + '>&nbsp;' +
                                     '<span class="date">' +
                                         days[i] +
                                     '</span>' +
