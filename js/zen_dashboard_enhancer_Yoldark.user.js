@@ -1,9 +1,9 @@
-// ==UserScript==
+﻿// ==UserScript==
 // @author      Yoldark
 // @name        zen dashboard enhancer
 // @namespace   zenminer
 // @include     https://cloud.zenminer.com/*
-// @version     2.6.12
+// @version     2.7.1
 // @updateUrl   https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/master/js/zen_dashboard_enhancer_Yoldark.user.js
 // @grant       GM_log
 // @grant       GM_getValue
@@ -20,40 +20,10 @@
 // @require     https://raw.githubusercontent.com/mcmastermind/jClocksGMT/master/js/jClocksGMT.js
 // @require     https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/master/js/financial.js
 // @require     https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/master/js/top_dashboard.js
-// @resource    zenDashboardCss https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/master/css/zen_dashboard_enhancer_Yoldark.css
+// @require     https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/dev/js/roi_calc.js
+// @resource    zenDashboardCss https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/dev/css/zen_dashboard_enhancer_Yoldark.css
 // ==/UserScript==
-// changelog
-// 1.0.0 : creation, add BTC valu1e in zencloud dashboard
-// 1.1.0 : Add informations message if user has no fund on his account.
-// 2.0.0 : change Jquery version, add highcharts, add financial chart, add date.js library
-// 2.1.0 : invert credit and debits on financial chart
-// 2.2.0 : don't display fund in financial chart
-// 2.3.0 : add outcome line in financial chart, change colors
-// 2.3.1 : remove a trailing comma :)
-// 2.3.2 : properly truncate outcome values
-// 2.3.3 : Change yAxis to "BTC" instead of "BTC Value"
-// 2.4.0 : Export to CSV.
-// 2.4.1 : Add Calculated rates fee
-// 2.4.2 : Dont display multiple financial highcharts
-// 2.4.3 : Better identification of which page is active, use function to clean code
-// 2.4.4 : Correct incompatibility with chrome ?
-// 2.4.5 : Add config panel
-// 2.5.0 : Add configuration panel for financial and shit mode, logs messages
-// 2.5.1 : Remove "Withdrawal" and "Sale" from the financial chart
-// 2.6.0 : Add configuration checker, modal dialogs, callbacks
-// 2.6.1 : Use only "Payout" and "Maintenance fee" for the graphe, change outcome by income
-// 2.6.2 : Test only for minor version, add Rerun test on config panel, reload after saving
-// 2.6.3 : Add Top bar configuration element in the dashboard
-// 2.6.4 : Total amount checkbox was named calculated fee
-// 2.6.5 : Correct days displayed in case of range cut
-// 2.6.6 : Fix for positive maintenance fee
-// 2.6.7 : Update link, chrome compatibility improvment.
-// 2.6.8 : Add user autorisation for doing test or not
-// 2.6.9 : host all the used libraries
-// 2.6.10 : add external css style, add clock
-// 2.6.11 : externalise highcharts libs because of encoding problems
-// 2.6.12 : externalize top dashboard correct BTC and $ value when over than $ 999.99 or BTC 999.99
-var VERSION = '2.6.12';
+var VERSION = '2.7.1';
 var cutVersion = VERSION.split('.');
 var SHORT_VERSION = cutVersion[0] + "." + cutVersion[1];
 var FINANCIAL_DISPLAYED_DAYS_QUANTITY = 50;
@@ -64,6 +34,7 @@ var MESSAGE_TYPE_SUCCESS = 'success';
 var MESSAGE_TYPE_ERROR = 'error';
 var MESSAGE_TYPE_WARNING = 'error';
 var AJAX_RETRIEVE_FINANCIAL_DATA = 'https://cloud.zenminer.com/api/dt/financials';
+var AJAX_RETRIEVE_LATEST_ACTIVITY = 'https://cloud.zenminer.com/api/activity';
 
 var zenDashboardCss = GM_getResourceText ("zenDashboardCss");
 GM_addStyle (zenDashboardCss);
@@ -193,12 +164,16 @@ function initializeConfigPanel(container) {
     if (GM_getValue('ACTIVATE_CLOCK')) {
         activateClock = 'checked="checked"';
     }
+    var activateROI = '';
+    if (GM_getValue('ACTIVATE_ROI', false)) {
+        activateROI = 'checked="checked"';
+    }
 
     var panelAdminCode =
        '<div class="panel panel-default plain panel-config">' +
             '<div class="panel-heading white-bg">' +
                 '<h4 class="panel-title"><i class="br-compass"></i>' +
-                    'Greasemonkey script config (made by Yoldark)' +
+                    'Yoldark\'s dashboard enhancer (GreaseMonkey script)' +
                 '</h4>' +
                 '<h4 class="panel-title">Version : ' + VERSION + '</h4>' +
             '</div>' +
@@ -234,12 +209,12 @@ function initializeConfigPanel(container) {
                     '<input class="btn btn-primary reset-clock" type="button" ' +
                         'value="Reset to default" />' +
                 '</label><br/><br/><br/>' +
-                 '<h4 class="panel-title">Financial chart :</h4><br/>' +
-                 '<div class="form-group">' +
+                '<h4 class="panel-title">Financial chart :</h4><br/>' +
+                '<div class="form-group">' +
                     '<label>' +
                         '<input class="checkbox-financial-activation" type="checkbox"' +
                         'value="activate" ' + activateFinancial + '/>&nbsp;' +
-                        'Enable Financial panel on Balance page' +
+                        'Enable Financial chart on Balance page' +
                     '</label>' +
                 '</div>' +
                 '<label class="control-label">Numbers of displayed days&nbsp;' +
@@ -248,8 +223,15 @@ function initializeConfigPanel(container) {
                         '&nbsp;' +
                     '<input class="btn btn-primary reset-financial" type="button" ' +
                         'value="Reset to default" />' +
-                '</label><br/>' +
-                '<br/><br/>' +
+                '</label><br/><br/><br/>' +
+                '<h4 class="panel-title">ROI chart :</h4><br/>' +
+                '<div class="form-group">' +
+                    '<label>' +
+                        '<input class="checkbox-roi-activation" type="checkbox"' +
+                        'value="activate" ' + activateROI + '/>&nbsp;' +
+                        'Enable ROI chart on dashboard page' +
+                    '</label>' +
+                '</div><br/><br/><br/>' +
                 '<h4 class="panel-title">Misc :</h4><br/>' +
                 '<div class="form-group">' +
                     '<label>'+
@@ -284,6 +266,7 @@ function initializeConfigPanel(container) {
                 GM_setValue('ENABLE_TOP_BTC_RATE', $('.checkbox-calculated-btc-rate').is(':checked'));
                 GM_setValue('ACTIVATE_CLOCK', $('.checkbox-clock').is(':checked'));
                 GM_setValue('CLOCK_DIFF', $('.input-clock').val());
+                GM_setValue('ACTIVATE_ROI', $('.checkbox-roi-activation').is(':checked'));
                 if ($('.checkbox-config-checker').is(':checked')) {
                     GM_setValue('CONFIG_CHECKER', null);
                 }
@@ -300,7 +283,19 @@ function initializeConfigPanel(container) {
        validateConfigurationElement('config-panel');
 }
 
-function initializeModalDialog(title, body, okText, cancelText, successCallback, cancelCallback) {
+function modalDialogShow(id) {
+    $('#' + id).show();
+    $("body").addClass("modal-open");
+    $("body").append('<div class="modal-backdrop fade in"></div>');
+}
+
+function modalDialogHide(id) {
+    $('#' + id).hide();
+    $("body").removeClass("modal-open");
+    $(".modal-backdrop").remove();
+}
+
+function initializeModalDialog(id, title, body, okText, cancelText, successCallback, cancelCallback) {
     if (typeof okText === 'undefined') {
         okText = 'Ok';
     }
@@ -308,7 +303,7 @@ function initializeModalDialog(title, body, okText, cancelText, successCallback,
         cancelText = 'Cancel';
     }
     $('#add').after(
-        '<div id="yoldark-modal" class="modal">' +
+        '<div id="' + id + '" class="modal yoldark-modal">' +
             '<div class="modal-dialog">' +
                 '<div class="modal-content">' +
                     '<div class="modal-header">' +
@@ -329,21 +324,20 @@ function initializeModalDialog(title, body, okText, cancelText, successCallback,
                '</div>' +
         '</div>' +
     '</div>');
-    $('#yoldark-modal').show();
-    $(document).on("click", '#yoldark-modal .close', function () {
-        $('#yoldark-modal').remove();
+    $(document).on("click", '#' + id + ' .close', function () {
+        modalDialogHide(id);
         if (typeof cancelCallback !== 'undefined') {
             cancelCallback();
         }
     });
-    $(document).on("click", '#yoldark-modal .btn-danger', function () {
-        $('#yoldark-modal').remove();
+    $(document).on("click", '#' + id + ' .btn-danger', function () {
+        modalDialogHide(id);
         if (typeof cancelCallback !== 'undefined') {
             cancelCallback();
         }
     });
-    $(document).on("click", '#yoldark-modal .btn-yoldark-modal', function () {
-        $('#yoldark-modal').remove();
+    $(document).on("click", '#' + id + ' .btn-yoldark-modal', function () {
+        modalDialogHide(id);
         if (typeof successCallback !== 'undefined') {
             successCallback();
         }
@@ -372,28 +366,32 @@ function validateConfigurationElement(id) {
 function configurationChecker() {
     var shitModeBeforeTest = GM_getValue('SHIT_MODE');
     GM_setValue('TESTING_MODE', true);
-    initializeModalDialog('Yoldark dashboard enhancer config checking',
+    initializeModalDialog('yoldark-modal', 'Yoldark dashboard enhancer config checking',
         '<div>Display config checker : <span class="label label-success">Done</span></div>');
+    modalDialogShow('yoldark-modal');
     var mockDiv = $('<div>', {id : "mockDiv", class : "hidden"});
     $('body').prepend(mockDiv);
     displayLogMessage('Greasemonkey config checking', MESSAGE_TYPE_SUCCESS);
     displayLogMessage('Greasemonkey config checking error', MESSAGE_TYPE_ERROR);
 
-    var callback = function() {
+    var roiCallback = function() {
         mockDiv.empty();
         new TopDashboard(mockDiv, SCRIPT_FEE_RATE, GENESIS_FEE_RATE);
         mockDiv.empty();
         mockDiv.append("<div></div>");
         initializeConfigPanel('#mockDiv div');
+        mockDiv.empty();
 
         GM_setValue('SHIT_MODE', true);
         GM_setValue('SHIT_MODE_ENABLED', false);
         checkShitMode(function () {
             GM_setValue('SHIT_MODE', false);
             checkShitMode(function () {
-                GM_setValue('TESTING_MODE', false);
+                mockDiv.empty();
 
                 //test are ok
+                GM_setValue('TESTING_MODE', false);
+
                 if ($(".spin-holder-yoldark").length === 0) {
                     GM_setValue('CONFIG_CHECKER', SHORT_VERSION);
                     GM_setValue("MODAL_MESSAGE_SUCCESS_QUEUE",
@@ -410,16 +408,23 @@ function configurationChecker() {
             });
         });
     };
-    new Financial(mockDiv, AJAX_RETRIEVE_FINANCIAL_DATA, callback);
+
+    var financialCallback = function() {
+        mockDiv.empty();
+        mockDiv.append("<div>");
+        new RoiCalc($('div', mockDiv), AJAX_RETRIEVE_LATEST_ACTIVITY, AJAX_RETRIEVE_FINANCIAL_DATA, roiCallback);
+    };
+    new Financial(mockDiv, AJAX_RETRIEVE_FINANCIAL_DATA, financialCallback);
 }
 
 function main() {
     if (GM_getValue("MODAL_MESSAGE_SUCCESS_QUEUE", false)) {
-        initializeModalDialog('Yoldark dashboard enhancer config checking result',
+        initializeModalDialog('yoldark-modal', 'Yoldark dashboard enhancer config checking result',
         '<span class="label label-success">' +
             GM_getValue("MODAL_MESSAGE_SUCCESS_QUEUE") +
         '</span>');
         GM_setValue("MODAL_MESSAGE_SUCCESS_QUEUE", null);
+        modalDialogShow('yoldark-modal');
     }
     GM_setValue('TESTING_MODE', false);
     var pageName = $('.page-header').html().split('>');
@@ -439,12 +444,13 @@ function main() {
                 GM_setValue('CONFIG_CHECKER', SHORT_VERSION);
             };
             initializeModalDialog(
+                'yoldark-modal',
                 'Moving for testing',
                 'Moving to the profile page for testing the configuration',
                 'Ok',
                 'Cancel tests',
                 redirect, cancelTest);
-
+            modalDialogShow('yoldark-modal');
         } else {
             configurationChecker();
         }
@@ -459,11 +465,17 @@ function main() {
             }
         } else if (page === 'Profile') {
             initializeConfigPanel($('div.col-lg-6.col-md-6.col-sm-6.col-xs-12 .panel:first'));
+        } else if (page === 'Dashboard') {
+            if (GM_getValue('ACTIVATE_ROI', false)) {
+                new RoiCalc($('div.col-lg-3.col-md-6.col-sm-6.col-xs-12'),
+                    AJAX_RETRIEVE_LATEST_ACTIVITY,
+                    AJAX_RETRIEVE_FINANCIAL_DATA);
+            }
         }
         checkShitMode();
     }
 }
 
 $(document).ready(function() {
-	main();
+    main();
 });
