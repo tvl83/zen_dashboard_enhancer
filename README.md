@@ -27,6 +27,7 @@ https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldm
 + Display chart to see income, debits and credits progress
 + Config panel to configure all the functionalities
 + Config checker to detect compatibility problems
++ ROI tracker
 
 ======================
 

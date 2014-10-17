@@ -94,7 +94,10 @@ var RoiCalc = function(container, ajaxActivityUrl, ajaxFinancialUrl, callback) {
                     value: 0,
                     width: 1,
                     color: '#808080'
-                }]
+                }],
+                labels: {
+                    rotation: -75
+                }
             },
             tooltip: {
                 valueSuffix: ' $'
