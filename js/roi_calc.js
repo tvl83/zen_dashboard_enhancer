@@ -40,10 +40,10 @@ var RoiCalc = function(container, ajaxActivityUrl, ajaxFinancialUrl, callback) {
             '<div class="clearfix">' +
             '</div>');
         initializeModalDialog(
+            'yoldark-modal',
             'ROI track configuration',
-            '<h4>Expenses</h4>' +
-            '<p>All the expenses will be added into the reach amount (use 0 to not count an expense ' +
-                '(like auto purchase from market))</p>' +
+            '<h4>External Expenses</h4>' +
+            '<p>All the expenses will be added into the reach amount (use 0 to not count an expense)</p>' +
             '<div class="expenses">' +
             '</div>' +
             '<h4>Transfers</h4>'+
@@ -60,9 +60,8 @@ var RoiCalc = function(container, ajaxActivityUrl, ajaxFinancialUrl, callback) {
             that._saveConfiguration,
             that._cancelConfiguration
         );
-        $('#yoldark-modal').hide();
         $(document).on("click", ".configure-roi", function() {
-            $('#yoldark-modal').toggle( );
+            modalDialogShow('yoldark-modal');
         });
         $('.yoldark-roi-chart-container').prepend($('<div>', {id : 'yoldark-roi-chart', class : 'row'}));
         that.chart = new Highcharts.Chart({
