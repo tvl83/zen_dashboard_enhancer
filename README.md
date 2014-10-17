@@ -61,3 +61,5 @@ https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldm
 + 2.6.10 : add external css style, add clock
 + 2.6.11 : externalise highcharts libs because of encoding problems
 + 2.6.12 : externalize top dashboard correct BTC and $ value when over than $ 999.99 or BTC 999.99
++ 2.7.0 : add roi chart
++ 2.7.1 : improve modal dialog
