@@ -3,7 +3,7 @@
 // @name        zen dashboard enhancer
 // @namespace   zenminer
 // @include     https://cloud.zenminer.com/*
-// @version     2.7.2
+// @version     2.7.3
 // @updateUrl   https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/master/js/zen_dashboard_enhancer_Yoldark.user.js
 // @grant       GM_log
 // @grant       GM_getValue
@@ -23,10 +23,11 @@
 // @require     https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/master/js/roi_calc.js
 // @resource    zenDashboardCss https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/master/css/zen_dashboard_enhancer_Yoldark.css
 // ==/UserScript==
-var VERSION = '2.7.2';
+var VERSION = '2.7.3';
 var cutVersion = VERSION.split('.');
 var SHORT_VERSION = cutVersion[0] + "." + cutVersion[1];
 var FINANCIAL_DISPLAYED_DAYS_QUANTITY = 50;
+var ROI_DISPLAYED_DAYS_QUANTITY = 30;
 var CLOCK_DIFF = '-5';
 var GENESIS_FEE_RATE = 0.01;
 var SCRIPT_FEE_RATE = 0.08;
@@ -46,6 +47,10 @@ if (GM_getValue('ACTIVATE_FINANCIAL', null) === null) {
 
 if (GM_getValue('FINANCIAL_DISPLAYED_DAYS_QUANTITY', null) === null) {
     GM_setValue('FINANCIAL_DISPLAYED_DAYS_QUANTITY', FINANCIAL_DISPLAYED_DAYS_QUANTITY);
+}
+
+if (GM_getValue('ROI_DISPLAYED_DAYS_QUANTITY', null) === null) {
+    GM_setValue('ROI_DISPLAYED_DAYS_QUANTITY', ROI_DISPLAYED_DAYS_QUANTITY);
 }
 
 if (GM_getValue('SHIT_MODE', null) === null) {
@@ -231,7 +236,14 @@ function initializeConfigPanel(container) {
                         'value="activate" ' + activateROI + '/>&nbsp;' +
                         'Enable ROI chart on dashboard page' +
                     '</label>' +
-                '</div><br/><br/><br/>' +
+                '</div>' +
+                '<label class="control-label">Numbers of displayed days&nbsp;' +
+                    '<input class="input-roi-days" '+
+                        'value="' + GM_getValue('ROI_DISPLAYED_DAYS_QUANTITY') + '" />'+
+                        '&nbsp;' +
+                    '<input class="btn btn-primary reset-roi" type="button" ' +
+                        'value="Reset to default" />' +
+                '</label><br/><br/><br/>' +
                 '<h4 class="panel-title">Misc :</h4><br/>' +
                 '<div class="form-group">' +
                     '<label>'+
@@ -251,6 +263,9 @@ function initializeConfigPanel(container) {
         $(document).on("click", ".reset-financial", function () {
             $('.input-financial-days').val(FINANCIAL_DISPLAYED_DAYS_QUANTITY);
         });
+        $(document).on("click", ".reset-financial", function () {
+            $('.input-financial-days').val(ROI_DISPLAYED_DAYS_QUANTITY);
+        });
         $(document).on("click", ".reset-clock", function () {
             $('.input-clock').val(CLOCK_DIFF);
         });
@@ -267,6 +282,7 @@ function initializeConfigPanel(container) {
                 GM_setValue('ACTIVATE_CLOCK', $('.checkbox-clock').is(':checked'));
                 GM_setValue('CLOCK_DIFF', $('.input-clock').val());
                 GM_setValue('ACTIVATE_ROI', $('.checkbox-roi-activation').is(':checked'));
+                GM_setValue('ROI_DISPLAYED_DAYS_QUANTITY', $('.input-roi-days').val());
                 if ($('.checkbox-config-checker').is(':checked')) {
                     GM_setValue('CONFIG_CHECKER', null);
                 }

@@ -203,6 +203,7 @@ var RoiCalc = function(container, ajaxActivityUrl, ajaxFinancialUrl, callback) {
                     btcValue = btcValue.substring(0, 6);
                     var alreadyDonePurchaseDate = [];
                     var checked;
+                    var dayStart = 0;
 
                     //Remove the previous series
                     for (i = that.chart.series.length; i > 0; i--) {
@@ -332,6 +333,15 @@ var RoiCalc = function(container, ajaxActivityUrl, ajaxFinancialUrl, callback) {
                         reach.push(parseFloat(amount.toFixed(2)));
                         cumulReach += parseFloat(GM_getValue('EXPENSE_' + days[i], 0));
                     }
+
+                    if (days.length > GM_getValue('ROI_DISPLAYED_DAYS_QUANTITY')) {
+                        dayStart = days.length - GM_getValue('ROI_DISPLAYED_DAYS_QUANTITY');
+                    }
+
+                    //Remove unused days
+                    days.splice(0, dayStart);
+                    funds.splice(0, dayStart);
+                    reach.splice(0, dayStart);
 
                     //Add the series to the chart
                     that.chart.colorCounter = 2;

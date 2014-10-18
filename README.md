@@ -65,3 +65,4 @@ https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldm
 + 2.7.0 : add roi chart
 + 2.7.1 : improve modal dialog
 + 2.7.2 : correct withdrawals problem on roi chart
++ 2.7.3 : allow to set the number of displayed days on ROI chart
