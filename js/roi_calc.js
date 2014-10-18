@@ -1,4 +1,3 @@
-
 var RoiCalc = function(container, ajaxActivityUrl, ajaxFinancialUrl, callback) {
     var that = this;
     var chart;
@@ -227,6 +226,7 @@ var RoiCalc = function(container, ajaxActivityUrl, ajaxFinancialUrl, callback) {
                         data.purchasesPresent[currentDate] = false;
                         data.tranferIsPresent[currentDate] = false;
                         data.withdrawalPresent[currentDate] = false;
+                        data.withdrawals[currentDate] = 0;
                     }
 
                     //Sort all the days
@@ -332,7 +332,6 @@ var RoiCalc = function(container, ajaxActivityUrl, ajaxFinancialUrl, callback) {
                         reach.push(parseFloat(amount.toFixed(2)));
                         cumulReach += parseFloat(GM_getValue('EXPENSE_' + days[i], 0));
                     }
-
 
                     //Add the series to the chart
                     that.chart.colorCounter = 2;
