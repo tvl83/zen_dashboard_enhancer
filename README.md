@@ -64,3 +64,4 @@ https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldm
 + 2.6.12 : externalize top dashboard correct BTC and $ value when over than $ 999.99 or BTC 999.99
 + 2.7.0 : add roi chart
 + 2.7.1 : improve modal dialog
++ 2.7.2 : correct withdrawals problem on roi chart
