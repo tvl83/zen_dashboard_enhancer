@@ -23,7 +23,7 @@
 // @require     https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/master/js/roi_calc.js
 // @resource    zenDashboardCss https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/master/css/zen_dashboard_enhancer_Yoldark.css
 // ==/UserScript==
-        var VERSION = '2.7.6';
+var VERSION = '2.7.6';
 var cutVersion = VERSION.split('.');
 var SHORT_VERSION = cutVersion[0] + "." + cutVersion[1];
 var FINANCIAL_DISPLAYED_DAYS_QUANTITY = 50;
