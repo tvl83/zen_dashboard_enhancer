@@ -1,3 +1,28 @@
+﻿// ==UserScript==
+// @author      Yoldark
+// @name        zen dashboard enhancer
+// @namespace   zenminer
+// @include     https://cloud.zenminer.com/*
+// @version     2.7.4
+// @updateUrl   https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/master/js/zen_dashboard_enhancer_Yoldark.user.js
+// @grant       GM_log
+// @grant       GM_getValue
+// @grant       GM_setValue
+// @grant       GM_listValues
+// @grant       GM_getResourceText
+// @grant       GM_addStyle
+// @require     https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/master/js/libraries/jquery-1.11.1.min.js
+// @require     http://code.highcharts.com/highcharts.js
+// @require     https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/master/js/libraries/exporting.js
+// @require     https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/master/js/libraries/export-csv.js
+// @require     https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/master/js/libraries/date.js
+// @require     https://raw.githubusercontent.com/mcmastermind/jClocksGMT/master/js/jquery.rotate.js
+// @require     https://raw.githubusercontent.com/mcmastermind/jClocksGMT/master/js/jClocksGMT.js
+// @require     https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/master/js/financial.js
+// @require     https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/master/js/top_dashboard.js
+// @require     https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/master/js/roi_calc.js
+// @resource    zenDashboardCss https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/master/css/zen_dashboard_enhancer_Yoldark.css
+// ==/UserScript==
 var RoiCalc = function(container, ajaxActivityUrl, ajaxFinancialUrl, callback) {
     var that = this;
     var chart;
@@ -129,7 +154,7 @@ var RoiCalc = function(container, ajaxActivityUrl, ajaxFinancialUrl, callback) {
                 var i;
                 var type;
                 var result = {
-                    purchases : [], 
+                    purchases : [],
                     sales : []
                 };
 
@@ -244,7 +269,7 @@ var RoiCalc = function(container, ajaxActivityUrl, ajaxFinancialUrl, callback) {
 
                     //Sort all the days
                     days.sort();
-                    
+
                     //Fill the debits and credits grouped by days
                     for (i = 0; i < aaData.length; i++) {
                         aData = aaData[i];
@@ -295,6 +320,10 @@ var RoiCalc = function(container, ajaxActivityUrl, ajaxFinancialUrl, callback) {
                         funds.push(parseFloat(amount.toFixed(2)));
                         cumulFund += data.amount[days[i]];
 
+                        //Reset all the stored expenses if non used to avoid phantom purchases
+                        if (GM_getValue('EXPENSE_' + days[i], 0) !== 0 && data.purchasesPresent[days[i]] === false) {
+                            GM_setValue('EXPENSE_' + days[i], 0);
+                        }
 
                         //Add menu items in the configuration panel
                         if (data.purchasesPresent[days[i]] && data.autoPurchasesPresent[days[i]] === 0) {
