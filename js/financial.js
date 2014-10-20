@@ -142,6 +142,9 @@ var Financial = function(container, ajaxUrl, callback) {
                     debits.push(parseFloat(-debitsGrouped[days[i]].toFixed(8)));
                     credits.push(parseFloat(creditsGrouped[days[i]].toFixed(8)));
                     currentIncome = creditsGrouped[days[i]] - debitsGrouped[days[i]];
+                    if (GM_getValue('FINANCIAL_REVERT_DEBITS', false)) {
+                        currentIncome = creditsGrouped[days[i]] + debitsGrouped[days[i]];
+                    }
                     income.push(parseFloat(currentIncome.toFixed(8)));
                 }
 

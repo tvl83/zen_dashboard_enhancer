@@ -69,3 +69,4 @@ https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldm
 + 2.7.4 : Add sold event in roi graph, correct double purchase and auto purchase count
 + 2.7.5 : Reset unused purchases stored in memory
 + 2.7.6 : Allow to revert debits in fiancial chart
++ 2.7.7 : Correct income when debits are reverted
