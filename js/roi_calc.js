@@ -97,7 +97,6 @@ var RoiCalc = function(container, ajaxActivityUrl, ajaxFinancialUrl, callback) {
                 title: {
                     text: '$ amount'
                 },
-                min : 0,
                 plotLines: [{
                     value: 0,
                     width: 1,
@@ -120,14 +119,19 @@ var RoiCalc = function(container, ajaxActivityUrl, ajaxFinancialUrl, callback) {
         $.getJSON( ajaxFinancialUrl + '?iDisplayLength=0', function( subData ) {
                 var aaData = subData.aaData;
                 var dayIndex = 0;
+                var creditIndex = 2;
                 var debitIndex = 3;
                 var aData = null;
                 var purchases = [];
                 var days = [];
                 var currentDate = null;
-                var debitAmount;
+                var amount;
                 var i;
                 var type;
+                var result = {
+                    purchases : [], 
+                    sales : []
+                };
 
                 //Initialize dates to groups debits and credits by days
                 for (i = 0; i < aaData.length; i++) {
@@ -137,7 +141,8 @@ var RoiCalc = function(container, ajaxActivityUrl, ajaxFinancialUrl, callback) {
                     if ($.inArray(currentDate, days) === -1) {
                         days.push(currentDate);
                     }
-                    purchases[currentDate] = 0;
+                    result.purchases[currentDate] = 0;
+                    result.sales[currentDate] = 0;
                 }
 
                 //Sort all the days
@@ -148,19 +153,25 @@ var RoiCalc = function(container, ajaxActivityUrl, ajaxFinancialUrl, callback) {
                     aData = aaData[i];
                     currentDate = Date.parse(aData[dayIndex]).toString('yyyy/MM/dd');
                     type = aData[1].split('>') [1].split('<') [0];
-                    if (type === 'Purchase') {
+                    if (type === 'Purchase' || type === 'Sale') {
                         if (aData[debitIndex].length) {
-                            debitAmount = aData[debitIndex]
+                            amount = aData[debitIndex]
                                 .split('>') [1]
                                 .split('<') [0]
                                 .split(' ') [0];
-                            purchases[currentDate] += parseFloat(debitAmount);
+                            result.purchases[currentDate] += parseFloat(amount);
+                        } else if (aData[creditIndex].length) {
+                            amount = aData[creditIndex]
+                                .split('>') [1]
+                                .split('<') [0]
+                                .split(' ') [0];
+                            result.sales[currentDate] += parseFloat(amount);
                         }
                     }
                 }
 
                 if (callback) {
-                    callback(purchases);
+                    callback(result);
                 }
         });
     },
@@ -175,7 +186,7 @@ var RoiCalc = function(container, ajaxActivityUrl, ajaxFinancialUrl, callback) {
             },
             success: function (response) {
                 var aaData = response.aaData;
-                that._getPurchases(ajaxFinancialUrl, function(allPurchases) {
+                that._getPurchases(ajaxFinancialUrl, function(financials) {
                     var aData = null;
                     var days = [];
                     var currentDate = null;
@@ -202,6 +213,7 @@ var RoiCalc = function(container, ajaxActivityUrl, ajaxFinancialUrl, callback) {
                     var btcValue = (dollars / bitcoin).toString();
                     btcValue = btcValue.substring(0, 6);
                     var alreadyDonePurchaseDate = [];
+                    var alreadyDoneSalesDate = [];
                     var checked;
                     var dayStart = 0;
 
@@ -232,7 +244,7 @@ var RoiCalc = function(container, ajaxActivityUrl, ajaxFinancialUrl, callback) {
 
                     //Sort all the days
                     days.sort();
-
+                    
                     //Fill the debits and credits grouped by days
                     for (i = 0; i < aaData.length; i++) {
                         aData = aaData[i];
@@ -244,7 +256,10 @@ var RoiCalc = function(container, ajaxActivityUrl, ajaxFinancialUrl, callback) {
                                 data.amount[currentDate] += parseFloat(aData.details.split(' ')[3]);
                             }
                         } else if (aData.action === 'auto purchased miner') {
-                            data.amount[currentDate] -= parseFloat(aData.details.split('-')[1].split(' ')[0]);
+                            if ($.inArray(currentDate, alreadyDonePurchaseDate) === -1) {
+                                alreadyDonePurchaseDate.push(currentDate);
+                                data.amount[currentDate] += parseFloat(financials.purchases[currentDate]);
+                            }
                             data.autoPurchasesPresent[currentDate]++;
                             GM_setValue('EXPENSE_' + currentDate, 0);
                         } else if (aData.action === 'transfer completed') {
@@ -256,7 +271,7 @@ var RoiCalc = function(container, ajaxActivityUrl, ajaxFinancialUrl, callback) {
                         } else if (aData.action === 'purchased miner') {
                             if ($.inArray(currentDate, alreadyDonePurchaseDate) === -1) {
                                 alreadyDonePurchaseDate.push(currentDate);
-                                data.amount[currentDate] += parseFloat(allPurchases[currentDate]);
+                                data.amount[currentDate] += parseFloat(financials.purchases[currentDate]);
                             }
                         } else if (aData.action === 'activated code') {
                             data.purchasesPresent[currentDate] = true;
@@ -264,6 +279,11 @@ var RoiCalc = function(container, ajaxActivityUrl, ajaxFinancialUrl, callback) {
                             data.amount[currentDate] += parseFloat(aData.details.split(' ')[5]);
                             data.withdrawals[currentDate] += parseFloat(aData.details.split(' ')[5]);
                             data.withdrawalPresent[currentDate] = true;
+                        } else if (aData.action === 'sold miner') {
+                            if ($.inArray(currentDate, alreadyDoneSalesDate) === -1) {
+                                alreadyDoneSalesDate.push(currentDate);
+                                data.amount[currentDate] += parseFloat(financials.sales[currentDate]);
+                            }
                         }
                     }
 
