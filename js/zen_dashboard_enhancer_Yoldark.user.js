@@ -173,6 +173,10 @@ function initializeConfigPanel(container) {
     if (GM_getValue('ACTIVATE_ROI', false)) {
         activateROI = 'checked="checked"';
     }
+    var activateRevertDebits = '';
+    if (GM_getValue('FINANCIAL_REVERT_DEBITS', false)) {
+        activateRevertDebits = 'checked="checked"';
+    }
 
     var panelAdminCode =
        '<div class="panel panel-default plain panel-config">' +
@@ -220,6 +224,13 @@ function initializeConfigPanel(container) {
                         '<input class="checkbox-financial-activation" type="checkbox"' +
                         'value="activate" ' + activateFinancial + '/>&nbsp;' +
                         'Enable Financial chart on Balance page' +
+                    '</label>' +
+                '</div>' +
+                '<div class="form-group">' +
+                    '<label>' +
+                        '<input class="checkbox-financial-revert-debits" type="checkbox"' +
+                        'value="activate" ' + activateRevertDebits + '/>&nbsp;' +
+                        'Revert Debits to see them as positive values instead of negative ones.' +
                     '</label>' +
                 '</div>' +
                 '<label class="control-label">Numbers of displayed days&nbsp;' +
@@ -272,6 +283,7 @@ function initializeConfigPanel(container) {
         $(document).on("click", ".save-config", function () {
             setTimeout(function() {
                 GM_setValue('ACTIVATE_FINANCIAL', $('.checkbox-financial-activation').is(':checked'));
+                GM_setValue('FINANCIAL_REVERT_DEBITS', $('.checkbox-financial-revert-debits').is(':checked'));
                 GM_setValue('FINANCIAL_DISPLAYED_DAYS_QUANTITY', $('.input-financial-days').val());
                 GM_setValue('SHIT_MODE', $('.checkbox-shit-mode-activation').is(':checked'));
 
