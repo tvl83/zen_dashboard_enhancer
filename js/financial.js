@@ -6,9 +6,9 @@ var Financial = function(container, ajaxUrl, callback) {
         addConfigurationElement('Create financial chart', 'financial-chart-creation');
         if ($(container).length) {
             $(container)
-                .prepend('<div id="financialTrackingContainer"' +
+                    .prepend('<div id="financialTrackingContainer"' +
                             'style="min-width: 310px; height: 400px; margin: 0 auto">' +
-                         '</div>');
+                            '</div>');
             that.chart = new Highcharts.Chart({
                 chart: {
                     renderTo: 'financialTrackingContainer',
@@ -113,15 +113,19 @@ var Financial = function(container, ajaxUrl, callback) {
                     if (type === 'Payout' || type === 'Maintenance Fee') {
                         if (aData[debitIndex].length) {
                             debitAmount = aData[debitIndex]
-                                .split('>') [1]
-                                .split('<') [0]
-                                .split(' ') [0];
-                            debitsGrouped[currentDate] -= parseFloat(debitAmount);
+                                    .split('>') [1]
+                                    .split('<') [0]
+                                    .split(' ') [0];
+                            if (GM_getValue('FINANCIAL_REVERT_DEBITS', false)) {
+                                debitsGrouped[currentDate] += parseFloat(debitAmount);
+                            } else {
+                                debitsGrouped[currentDate] -= parseFloat(debitAmount);
+                            }
                         } else if (aData[creditIndex].length) {
                             creditAmount = aData[creditIndex]
-                                .split('>') [1]
-                                .split('<') [0]
-                                .split(' ') [0];
+                                    .split('>') [1]
+                                    .split('<') [0]
+                                    .split(' ') [0];
                             creditsGrouped[currentDate] += parseFloat(creditAmount);
                         }
                     }
