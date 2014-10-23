@@ -4,24 +4,24 @@
 // @namespace   zenminer
 // @include     https://cloud.zenminer.com/*
 // @version     2.7.8
-// @updateUrl   https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/v2.7.8/js/zen_dashboard_enhancer_Yoldark.user.js
+// @updateUrl   https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/v2.7.8t/js/zen_dashboard_enhancer_Yoldark.user.js
 // @grant       GM_log
 // @grant       GM_getValue
 // @grant       GM_setValue
 // @grant       GM_listValues
 // @grant       GM_getResourceText
 // @grant       GM_addStyle
-// @require     https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/v2.7.8/js/libraries/jquery-1.11.1.min.js
+// @require     https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/v2.7.8t/js/libraries/jquery-1.11.1.min.js
 // @require     http://code.highcharts.com/highcharts.js
-// @require     https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/v2.7.8/js/libraries/exporting.js
-// @require     https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/v2.7.8/js/libraries/export-csv.js
-// @require     https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/v2.7.8/js/libraries/date.js
+// @require     https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/v2.7.8t/js/libraries/exporting.js
+// @require     https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/v2.7.8t/js/libraries/export-csv.js
+// @require     https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/v2.7.8t/js/libraries/date.js
 // @require     https://raw.githubusercontent.com/mcmastermind/jClocksGMT/master/js/jquery.rotate.js
 // @require     https://raw.githubusercontent.com/mcmastermind/jClocksGMT/master/js/jClocksGMT.js
-// @require     https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/v2.7.8/js/financial.js
-// @require     https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/v2.7.8/js/top_dashboard.js
-// @require     https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/v2.7.8/js/roi_calc.js
-// @resource    zenDashboardCss https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/v2.7.8/css/zen_dashboard_enhancer_Yoldark.css
+// @require     https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/v2.7.8t/js/financial.js
+// @require     https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/v2.7.8t/js/top_dashboard.js
+// @require     https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/v2.7.8t/js/roi_calc.js
+// @resource    zenDashboardCss https://raw.githubusercontent.com/Yoldark34/zen_dashboard_enhancer/v2.7.8t/css/zen_dashboard_enhancer_Yoldark.css
 // ==/UserScript==
 var VERSION = '2.7.8';
 var cutVersion = VERSION.split('.');
