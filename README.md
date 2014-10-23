@@ -70,3 +70,4 @@ https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldm
 + 2.7.5 : Reset unused purchases stored in memory
 + 2.7.6 : Allow to revert debits in fiancial chart
 + 2.7.7 : Correct income when debits are reverted
++ 2.7.8 : Add account credit in roi fund calc

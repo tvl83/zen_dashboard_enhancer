@@ -284,6 +284,8 @@ var RoiCalc = function(container, ajaxActivityUrl, ajaxFinancialUrl, callback) {
                                 alreadyDoneSalesDate.push(currentDate);
                                 data.amount[currentDate] += parseFloat(financials.sales[currentDate]);
                             }
+                        } else if (aData.action === 'account credit') {
+                            data.amount[currentDate] += parseFloat(aData.details.split(' ')[2]);
                         }
                     }
 
