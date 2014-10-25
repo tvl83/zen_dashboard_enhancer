@@ -516,7 +516,7 @@ function main() {
             for(var i = 0; i< 100; i++){
                 priceTemp = priceColumn[i].innerText.replace('$', '');
                 priceTemp = priceTemp / btcValue;
-                unitTemp = unitPriceColumn[i].innerText / btcValue;
+                unitTemp = parseFloat(unitPriceColumn[i].innerText) / btcValue;
                 priceColumn[i].innerText = priceColumn[i].innerText + " ( BTC: " + priceTemp.toFixed(8) + " ) ";
                 unitPriceColumn[i].innerText = unitPriceColumn[i].innerText + " ( BTC: " + unitTemp.toFixed(8) + " ) ";
             }
