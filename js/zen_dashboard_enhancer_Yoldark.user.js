@@ -507,7 +507,6 @@ function main() {
             var btcValue = (dollars / bitcoin).toString();
             btcValue = btcValue.substring(0, 6);
 
-
             var priceColumn = $('td:nth-child(3)');
             var unitPriceColumn = $('td:nth-child(4)');
 
@@ -516,9 +515,10 @@ function main() {
             for(var i = 0; i< 100; i++){
                 priceTemp = priceColumn[i].innerText.replace('$', '');
                 priceTemp = priceTemp / btcValue;
-                unitTemp = parseFloat(unitPriceColumn[i].innerText) / btcValue;
+                unitTemp = unitPriceColumn[i].innerText / btcValue;
                 priceColumn[i].innerText = priceColumn[i].innerText + " ( BTC: " + priceTemp.toFixed(8) + " ) ";
                 unitPriceColumn[i].innerText = unitPriceColumn[i].innerText + " ( BTC: " + unitTemp.toFixed(8) + " ) ";
+                console.log ( "index: " + i);
             }
         }
         checkShitMode();
