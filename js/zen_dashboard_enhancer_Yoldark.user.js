@@ -1,5 +1,5 @@
 ﻿// ==UserScript==
-// @author      Yoldark
+// @author      Yoldark (modified by tvle83)
 // @name        zen dashboard enhancer
 // @namespace   zenminer
 // @include     https://cloud.zenminer.com/*
@@ -457,6 +457,7 @@ function main() {
     GM_setValue('TESTING_MODE', false);
     var pageName = $('.page-header').html().split('>');
     var page = pageName[2].trim();
+    console.log("page is : " + page);
 
     //In case of shit mode there is the standard img and the shitty one :) .
     if (pageName.length > 3) {
